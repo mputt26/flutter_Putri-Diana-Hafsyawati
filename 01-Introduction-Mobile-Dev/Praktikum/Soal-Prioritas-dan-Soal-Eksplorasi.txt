@@ -1,0 +1,39 @@
+﻿Soal Prioritas 1 (Nilai 80)
+Buat sebuah Google Docs untuk menjawab soal soal dibawah ini
+1. Tuliskan 5 bahasa pemrograman untuk membuat aplikasi Mobile(contoh: C# untuk Desktop Windows)
+Jawaban : 
+* Java dan kotlin (Android)
+* Dart (Multi Platform app)
+* Swift dan Objective-C (IOS)
+* Javascript (Mobile)
+* C++ (Desktop)
+2. Cari dan tuliskan 5 aplikasi yang berjalan pada sistem operasi Android namun tidak pada sistem operasi iOS
+Jawaban : 
+* Google Camera
+* Play Store
+* Zarchive
+* Clean Master
+* ES File Expore Manager\
+Soal Prioritas 2 (Nilai 20)
+1. Cari dan tuliskan 5 aplikasi yang berjalan pada sistem operasi IOS namun tidak pada sistem operasi Android
+Jawaban : 
+* App Store
+* Ginger Band
+* Safary
+* Pro Create
+* I-Tones Store
+2. Cari 2 buah software yang dapat berjalan pada platform website dan juga Desktop!
+Contoh software yangd apat berja;an pada platform website dan Desktop diantaranya : Telegram, Canva, WhatsApp, Figma
+Soal Eksplorasi (Nilai 20)
+1. Jelaskan perbedaan antara pengembangan aplikasi mobile secara hybrid (contoh: Flutter) dan pengembangan aplikasi mobile secara native (contoh: Kotlin untuk pengembangan aplikasi Android).
+* Perbedaan : 
+Hybrid : bisa berjalan dua atau lebih platform sekaligus seperti flutter yang bisa berjalan di android, IOS, dan web
+Native : hanya berjalan di 1 platform seperti Swift yang berjalan di mobile IOS
+* Keunggulan : 
+native lebih diunggulkan karena bisa mengakses semua fitur yang dimiliki platform tersebut.
+hybrid berjalan di banyak platform sehingga penggunaan fitur fiturnya terbatas 
+* biaya : 
+native lebih membutuhkan banyak biaya, karena jika perusahaan ingin membuat suatu aplikasi supaya aplikasinya bisa berjalan di android dan IOS perusahaan tersebut harus memiliki dua developer
+hybrid lebih murah karena jika perusahaan ingin membuat suatu aplikasi yang berjalan di android dan IOS perusahaan tersebut hanya membutuhkan satu developer saja 
+2. Sebutkan contoh kasus yang tepat untuk pengembangan aplikasi mobile secara hybrid.
+aplikasi sosial media yang memungkinkan pengguna untuk berinteraksi, berbagi konten,  dan berkomunikasi dengan user lain. menggunakan pengembangan secara hybrid karena untuk merilis pembaruan dan fitur baru secara cepat di semua platform . contoh aplikasi seperti instagram dan twitter
