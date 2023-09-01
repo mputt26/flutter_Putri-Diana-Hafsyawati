@@ -1,3 +1,5 @@
+//Buatlah sebuah piramid bintang
+
 void main() {
   int susun = 8;
 

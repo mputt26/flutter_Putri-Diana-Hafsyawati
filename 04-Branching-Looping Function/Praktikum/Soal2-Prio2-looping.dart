@@ -1,3 +1,4 @@
+//Buatlah sebuah jam pasir
 void main() {
   int tingkat = 6;
 

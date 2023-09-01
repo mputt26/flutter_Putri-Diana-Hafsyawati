@@ -1,3 +1,8 @@
+//1. tampilkan faktorial dari nilai nilai dibawah in:
+    // 1. 10
+    // 2. 40
+    // 3. 50
+    
 void main() {
   int nilai1 = 10;
   int nilai2 = 40;
