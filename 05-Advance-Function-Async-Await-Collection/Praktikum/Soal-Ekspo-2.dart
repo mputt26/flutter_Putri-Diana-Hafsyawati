@@ -11,19 +11,19 @@ void main() {
     'rust'
   ];
 
-  Map<String, dynamic> frekuensi = countFrequency(input);
+  Map<String, int> frekuensi = countFrequency(input);
 
   frekuensi.forEach((key, value) {
     print('$key: $value');
   });
 }
 
-Map<String, dynamic> countFrequency(List<String> input) {
-  Map<String, dynamic> frekuensi = {};
+Map<String, int> countFrequency(List<String> input) {
+  Map<String, int> frekuensi = {};
 
   for (String item in input) {
     if (frekuensi.containsKey(item)) {
-      frekuensi[item]++;
+      frekuensi[item]= frekuensi[item]! + 1;
     } else {
       frekuensi[item] = 1;
     }
