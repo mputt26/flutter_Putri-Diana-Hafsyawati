@@ -12,7 +12,7 @@ class HelloWorld extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Putri App'),
+          title: const Text('Putri Apps'),
         ),
         body: Center(
           child: Text(
