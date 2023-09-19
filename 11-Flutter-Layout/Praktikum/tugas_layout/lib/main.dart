@@ -8,6 +8,10 @@ class Contact {
   Contact(this.name, this.phone);
 }
 
+final List<Contact> contacts = [
+  Contact('Anisa Yuniarti', '+6264867252'),
+  Contact('Ararya Hafidz', '+62823412635'),
+];
 void main() {
   runApp(const HelloWorld());
 }
@@ -98,23 +102,19 @@ class _HelloWorldState extends State<HelloWorld> {
               Divider(thickness: 2.0, indent: 20.0, endIndent: 20.0),
 
               //form
-              formInput(namaControllers),
+              formInput(namaControllers, nomorControllers, formKey),
 
               //button checkbox dan lingkaran
-              buttonSubmit(),
-
-              //button submit dan save
               buttonSubmit(),
 
               SizedBox(
                 height: 20.0,
               ),
-
+              contactTittle(),
               contactWidget(),
             ],
           ),
         ),
-
         //Navigation Bar
         bottomNavigationBar: BottomNavigationBar(
           backgroundColor: Color(0xFF6200EE),
@@ -165,8 +165,11 @@ Widget longText() {
   );
 }
 
-Widget formInput(TextEditingController namaControllers, formKey,
-    TextEditingController nomorControllers) {
+Widget formInput(
+  TextEditingController namaControllers,
+  TextEditingController nomorControllers,
+  GlobalKey<FormState> formKey,
+) {
   return Container(
     child: Container(
       margin: EdgeInsets.only(right: 20.0, left: 20.0),

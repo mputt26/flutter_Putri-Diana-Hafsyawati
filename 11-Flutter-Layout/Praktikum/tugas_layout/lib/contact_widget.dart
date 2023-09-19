@@ -53,6 +53,49 @@ class _ContactWidgetState extends State<ContactWidget> {
 
   @override
   Widget build(BuildContext context) {
-    
+    return Container(
+      decoration: BoxDecoration(
+        color: Color.fromARGB(64, 255, 200, 253),
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+      margin: EdgeInsets.all(20.0),
+      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: ListView.builder(
+        itemCount: contacts.length,
+        itemBuilder: (BuildContext context, int index) {
+          final contact = contacts[index];
+          final avatarText = contact.name[0];
+          return ListTile(
+            leading: CircleAvatar(
+              child: Text(avatarText),
+              backgroundColor: Color.fromARGB(184, 102, 80, 164),
+            ),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(contacts[index].name),
+                Padding(
+                  padding: const EdgeInsets.only(left: 20.0),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.edit),
+                        onPressed: () {},
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: () {},
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            subtitle: Text(contacts[index].phone),
+            onTap: () {},
+          );
+        },
+      ),
+    );
   }
 }
