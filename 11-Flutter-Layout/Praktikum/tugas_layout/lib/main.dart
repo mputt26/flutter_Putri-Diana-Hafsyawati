@@ -1,17 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'contacts_data.dart';
+import 'package:intl/intl.dart';
 
-class Contact {
-  final String name;
-  final String phone;
-
-  Contact(this.name, this.phone);
-}
-
-final List<Contact> contacts = [
-  Contact('Anisa Yuniarti', '+6264867252'),
-  Contact('Ararya Hafidz', '+62823412635'),
-];
 void main() {
   runApp(const HelloWorld());
 }
@@ -24,17 +15,32 @@ class HelloWorld extends StatefulWidget {
 }
 
 class _HelloWorldState extends State<HelloWorld> {
+  DateTime _dueDate = DateTime.now();
+  final currentDate = DateTime.now();
+  Contact newContact = Contact('', '');
+  List<Contact> contacts = [];
+  @override
+  void initState() {
+    super.initState();
+    contacts = contacts;
+  }
+
   var namaControllers = TextEditingController();
   var nomorControllers = TextEditingController();
 
   var formKey = GlobalKey<FormState>();
 
-  Contact contact = Contact('', '');
   @override
   void dispose() {
     namaControllers.dispose();
     nomorControllers.dispose();
     super.dispose();
+  }
+
+  void deleteContact(int index) {
+    setState(() {
+      contacts.removeAt(index);
+    });
   }
 
   @override
@@ -105,13 +111,22 @@ class _HelloWorldState extends State<HelloWorld> {
               formInput(namaControllers, nomorControllers, formKey),
 
               //button checkbox dan lingkaran
-              buttonSubmit(),
+              buttonSubmit(
+                namaControllers,
+                nomorControllers,
+                () {
+                  setState(() {
+                    contacts.add(newContact);
+                  });
+                },
+                newContact,
+              ),
 
               SizedBox(
                 height: 20.0,
               ),
               contactTittle(),
-              contactWidget(),
+              contactWidget(context),
             ],
           ),
         ),
@@ -231,7 +246,12 @@ Widget formInput(
   );
 }
 
-Widget buttonSubmit() {
+Widget buttonSubmit(
+  TextEditingController namaControllers,
+  TextEditingController nomorControllers,
+  VoidCallback setStateCallback,
+  Contact newContact,
+) {
   return Container(
     margin: EdgeInsets.only(right: 20.0),
     child: Column(
@@ -240,28 +260,18 @@ Widget buttonSubmit() {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            // ElevatedButton(
-            //   onPressed: () {
-            //     namaControllers.clear();
-            //     nomorControllers.clear();
-            //     setState(
-            //       () {
-            //         radioValue = '';
-            //         checkValue = false;
-            //       },
-            //     );
-            //   },
-            //   child: const Text('Reset'),
-            //   style: ElevatedButton.styleFrom(
-            //     shape: RoundedRectangleBorder(
-            //       borderRadius: BorderRadius.circular(30.0),
-            //     ),
-            //     backgroundColor: Colors.red,
-            //   ),
-            // ),
-            // SizedBox(width: 10),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                String nama = namaControllers.text;
+                String phone = nomorControllers.text;
+
+                newContact = Contact(nama, phone);
+                contacts.add(newContact);
+
+                namaControllers.clear();
+                nomorControllers.clear();
+                setStateCallback();
+              },
               child: const Text('Submit'),
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
@@ -286,8 +296,11 @@ Widget contactTittle() {
   );
 }
 
-Widget contactWidget() {
+Widget contactWidget(BuildContext context) {
+  double screenWidth = MediaQuery.of(context).size.width;
   return Container(
+    width: screenWidth,
+    height: 200,
     decoration: BoxDecoration(
       color: Color.fromARGB(64, 255, 200, 253),
       borderRadius: BorderRadius.circular(20.0),
@@ -318,7 +331,11 @@ Widget contactWidget() {
                     ),
                     IconButton(
                       icon: Icon(Icons.delete),
-                      onPressed: () {},
+                      onPressed: () {
+                        setState(() {
+                          contacts.removeAt(index);
+                        });
+                      },
                     ),
                   ],
                 ),
@@ -330,5 +347,25 @@ Widget contactWidget() {
         );
       },
     ),
+  );
+}
+
+Widget buildDatePicker(BuildContext context) {
+  var _dueDate;
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text('Date'),
+          TextButton(
+            child: const Text('Select'),
+            onPressed: () {},
+          )
+        ],
+      ),
+      Text(DateFormat('dd-MM-yyyy').format(_dueDate)),
+    ],
   );
 }
