@@ -401,33 +401,33 @@ class _ContactWidgetState extends State<contactWidget> {
   }
 }
 
-Widget buildDatePicker(BuildContext context) {
-  var _dueDate;
-  return Container(
-    margin: EdgeInsets.only(left: 20.0, right: 20.0),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text('Date'),
-            TextButton(
-              child: const Text('Select'),
-              onPressed: () {},
-            )
-          ],
-        ),
-        // Text(DateFormat('dd-MM-yyyy').format(_dueDate)),
-      ],
-    ),
-  );
-}
+// Widget buildDatePicker(BuildContext context) {
+//   var _dueDate;
+//   return Container(
+//     margin: EdgeInsets.only(left: 20.0, right: 20.0),
+//     child: Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Row(
+//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//           children: [
+//             const Text('Date'),
+//             TextButton(
+//               child: const Text('Select'),
+//               onPressed: () {},
+//             )
+//           ],
+//         ),
+//         // Text(DateFormat('dd-MM-yyyy').format(_dueDate)),
+//       ],
+//     ),
+//   );
+// }
 
 Future<String?> AlertEdit(BuildContext context, int index) {
   final contact = contacts[index].name;
   TextEditingController nameControllerEdit =
-      TextEditingController(text: contact[index].nam);
+      TextEditingController(text: contact[index].name);
 
   return showDialog<String>(
     context: context,
