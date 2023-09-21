@@ -4,7 +4,19 @@ import 'contacts_data.dart';
 import 'package:intl/intl.dart';
 
 void main() {
-  runApp(const HelloWorld());
+  runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: MyApp(),
+  ));
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const HelloWorld();
+  }
 }
 
 class HelloWorld extends StatefulWidget {
@@ -45,112 +57,141 @@ class _HelloWorldState extends State<HelloWorld> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Contact'),
-          centerTitle: true,
-          leading: Builder(
-            builder: (BuildContext context) {
-              return IconButton(
-                icon: Icon(Icons.menu),
-                onPressed: () {
-                  Scaffold.of(context).openDrawer();
-                },
-              );
-            },
-          ),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.search),
-              onPressed: () {},
-            )
-          ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Contact'),
+        centerTitle: true,
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: Icon(Icons.menu),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            );
+          },
         ),
-        drawer: Drawer(
-          child: ListView(
-            children: <Widget>[
-              DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                ),
-                child: Text('Ujicoba'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {},
+          )
+        ],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
               ),
-              ListTile(
-                title: Text('judul 1'),
-                onTap: () {},
-              ),
-              ListTile(
-                title: Text('judul 2'),
-                onTap: () {},
-              ),
-            ],
-          ),
-        ),
-        body: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              //icon hp
-              iconPhone(),
-              SizedBox(
-                height: 15.0,
-              ),
-              //judul
-              tittleContact(),
-              SizedBox(
-                height: 10.0,
-              ),
-              //text
-              longText(),
-              Divider(thickness: 2.0, indent: 20.0, endIndent: 20.0),
-
-              //form
-              formInput(namaControllers, nomorControllers, formKey),
-
-              //button checkbox dan lingkaran
-              buttonSubmit(
-                namaControllers,
-                nomorControllers,
-                () {
-                  setState(() {
-                    contacts.add(newContact);
-                  });
-                },
-                newContact,
-              ),
-
-              SizedBox(
-                height: 20.0,
-              ),
-              contactTittle(),
-              contactWidget(context),
-            ],
-          ),
-        ),
-        //Navigation Bar
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Color(0xFF6200EE),
-          selectedItemColor: Colors.white,
-          unselectedItemColor: Colors.white,
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.favorite),
-              label: 'Favorites',
+              child: Text('Ujicoba'),
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.search),
-              label: 'Search',
+            ListTile(
+              title: Text('judul 1'),
+              onTap: () {},
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.info),
-              label: 'Information',
+            ListTile(
+              title: Text('judul 2'),
+              onTap: () {},
             ),
           ],
         ),
       ),
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            //icon hp
+            iconPhone(),
+            SizedBox(
+              height: 15.0,
+            ),
+            //judul
+            tittleContact(),
+            SizedBox(
+              height: 10.0,
+            ),
+            //text
+            longText(),
+            Divider(thickness: 2.0, indent: 20.0, endIndent: 20.0),
+
+            //form
+            formInput(namaControllers, nomorControllers, formKey),
+
+            DatePicker(),
+            //button checkbox dan lingkaran
+            buttonSubmit(
+              namaControllers,
+              nomorControllers,
+              () {
+                setState(() {
+                  contacts.add(newContact);
+                });
+              },
+              newContact,
+            ),
+
+            SizedBox(
+              height: 20.0,
+            ),
+            contactTittle(),
+            contactWidget(),
+          ],
+        ),
+      ),
+      //Navigation Bar
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Color(0xFF6200EE),
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            label: 'Favorites',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Search',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.info),
+            label: 'Information',
+          ),
+        ],
+      ),
+    );
+  }
+
+  Column DatePicker() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('Date'),
+            TextButton(
+              child: const Text('Select'),
+              onPressed: () async {
+                final selectData = await showDatePicker(
+                  context: context,
+                  initialDate: currentDate,
+                  firstDate: DateTime(1990),
+                  lastDate: DateTime(currentDate.year + 5),
+                );
+                setState(() {
+                  if (selectData != null) {
+                    _dueDate = selectData;
+                  }
+                });
+              },
+            )
+          ],
+        ),
+        Text(DateFormat('dd-MM-yyyy').format(_dueDate)),
+      ],
     );
   }
 }
@@ -296,76 +337,137 @@ Widget contactTittle() {
   );
 }
 
-Widget contactWidget(BuildContext context) {
-  double screenWidth = MediaQuery.of(context).size.width;
-  return Container(
-    width: screenWidth,
-    height: 200,
-    decoration: BoxDecoration(
-      color: Color.fromARGB(64, 255, 200, 253),
-      borderRadius: BorderRadius.circular(20.0),
-    ),
-    margin: EdgeInsets.all(20.0),
-    padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-    child: ListView.builder(
-      itemCount: contacts.length,
-      itemBuilder: (BuildContext context, int index) {
-        final contact = contacts[index];
-        final avatarText = contact.name[0];
-        return ListTile(
-          leading: CircleAvatar(
-            child: Text(avatarText),
-            backgroundColor: Color.fromARGB(184, 102, 80, 164),
-          ),
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(contacts[index].name),
-              Padding(
-                padding: const EdgeInsets.only(left: 20.0),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.edit),
-                      onPressed: () {},
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () {
-                        setState(() {
-                          contacts.removeAt(index);
-                        });
-                      },
-                    ),
-                  ],
+class contactWidget extends StatefulWidget {
+  @override
+  _ContactWidgetState createState() => _ContactWidgetState();
+}
+
+class _ContactWidgetState extends State<contactWidget> {
+  // List<Contact> contacts = []; // Move the contacts list here
+
+  @override
+  Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    return Container(
+      width: screenWidth,
+      height: 200,
+      decoration: BoxDecoration(
+        color: Color.fromARGB(64, 255, 200, 253),
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+      margin: EdgeInsets.all(20.0),
+      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: ListView.builder(
+        itemCount: contacts.length, // Use the contacts list from the state
+        itemBuilder: (BuildContext context, int index) {
+          final contact = contacts[index];
+          final avatarText = contact.name[0];
+          return ListTile(
+            leading: CircleAvatar(
+              child: Text(avatarText),
+              backgroundColor: Color.fromARGB(184, 102, 80, 164),
+            ),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(contacts[index].name),
+                Padding(
+                  padding: const EdgeInsets.only(left: 20.0),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.edit),
+                        onPressed: () => AlertEdit(context, index),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: () {
+                          setState(() {
+                            contacts.removeAt(index);
+                          });
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-          subtitle: Text(contacts[index].phone),
-          onTap: () {},
-        );
-      },
-    ),
-  );
+              ],
+            ),
+            subtitle: Text(contacts[index].phone),
+            onTap: () {},
+          );
+        },
+      ),
+    );
+  }
 }
 
 Widget buildDatePicker(BuildContext context) {
   var _dueDate;
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Text('Date'),
-          TextButton(
-            child: const Text('Select'),
-            onPressed: () {},
-          )
-        ],
-      ),
-      Text(DateFormat('dd-MM-yyyy').format(_dueDate)),
-    ],
+  return Container(
+    margin: EdgeInsets.only(left: 20.0, right: 20.0),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('Date'),
+            TextButton(
+              child: const Text('Select'),
+              onPressed: () {},
+            )
+          ],
+        ),
+        // Text(DateFormat('dd-MM-yyyy').format(_dueDate)),
+      ],
+    ),
   );
 }
+
+Future<String?> AlertEdit(BuildContext context, int index) {
+  final contact = contacts[index].name;
+  TextEditingController nameControllerEdit =
+      TextEditingController(text: contact[index].nam);
+
+  return showDialog<String>(
+    context: context,
+    builder: (BuildContext context) => AlertDialog(
+      title: const Text('AlertDialog Title'),
+      content: Column(
+        children: [
+          Text('nama'),
+          TextField(
+            controller: nameControllerEdit,
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+            onPressed: () {
+              //logika untuk menindih value berdsarkan index
+              print(contacts);
+              setState(() {
+                contacts[index].name = nameControllerEdit.text;
+              });
+              Navigator.pop(context);
+              print(index);
+
+              print('submit edit');
+            },
+            child: Text('Submit Edit')),
+        TextButton(
+            onPressed: () {
+              Navigator.pop(context, 'Cancel');
+            },
+            child: Text('Cancel'))
+      ],
+    ),
+  );
+}
+
+      // 1. kita panggil semua data
+      // print('edit $data_kontak');
+      // 2. munculin box baru (show dialog/alert dialog)
+      // 3. di dalam box itu (show dialog/alert dialog) membuat form untuk memperharui data
+      // 4. masukkan data sebelumnya ke alert dialog tersebut(tempat kita untuk mendapatkan data baru)
+      // 5. ketika button di klik, maka data akan berganti
