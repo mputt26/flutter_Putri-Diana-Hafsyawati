@@ -4,14 +4,17 @@ import 'contacts_data.dart';
 import 'package:intl/intl.dart';
 
 void main() {
+  final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
+      GlobalKey<ScaffoldMessengerState>();
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: MyApp(),
+    home: MyApp(_scaffoldKey),
   ));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  final GlobalKey<ScaffoldMessengerState> scaffoldKey;
+  const MyApp(this.scaffoldKey, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +44,7 @@ class _HelloWorldState extends State<HelloWorld> {
   var nomorControllers = TextEditingController();
 
   var formKey = GlobalKey<FormState>();
-
+  Color _currentColor = Colors.orange;
   @override
   void dispose() {
     namaControllers.dispose();
@@ -53,6 +56,15 @@ class _HelloWorldState extends State<HelloWorld> {
     setState(() {
       contacts.removeAt(index);
     });
+  }
+
+  void _showErrorSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: 5),
+      ),
+    );
   }
 
   @override
@@ -121,10 +133,12 @@ class _HelloWorldState extends State<HelloWorld> {
             formInput(namaControllers, nomorControllers, formKey),
 
             DatePicker(),
+            // BuildColorPicker(context, _currentColor),
             //button checkbox dan lingkaran
             buttonSubmit(
               namaControllers,
               nomorControllers,
+              formKey,
               () {
                 setState(() {
                   contacts.add(newContact);
@@ -233,8 +247,33 @@ Widget formInput(
         key: formKey,
         child: Column(
           children: [
-            TextField(
+            TextFormField(
               controller: namaControllers,
+              validator: (value) {
+                final trimmedValue = value!.trim();
+                final words = trimmedValue.split('');
+                if (words.length < 2) {
+                  return 'Nama harus terdiri dari minimal 2 kata';
+                }
+                for (final word in words) {
+                  if (!word.isEmpty &&
+                      !word
+                          .substring(0, 1)
+                          .toUpperCase()
+                          .contains(RegExp(r'[A-Z]'))) {
+                    return 'Setiap kata harus dimulai dengan huruf kapital.';
+                  }
+                }
+                //validasi kosong
+                if (trimmedValue.isEmpty) {
+                  return 'Nama tidak boleh kosong';
+                }
+                if (trimmedValue
+                    .contains(RegExp(r'[0-9!@#%^&*(),.?":{}|<>]'))) {
+                  return 'Nama tidak boleh mengandung angka atau karakter khusus';
+                }
+                return null;
+              },
               decoration: InputDecoration(
                 labelText: 'Name',
                 hintText: 'Insert Your Name',
@@ -251,11 +290,6 @@ Widget formInput(
                 ),
               ),
             ),
-            // ThemeData(
-            //   colorSchemeSeed: Colors.amber,
-            //   useMaterial3: true,
-            // ),
-
             SizedBox(height: 15.0),
             TextField(
               controller: nomorControllers,
@@ -290,6 +324,7 @@ Widget formInput(
 Widget buttonSubmit(
   TextEditingController namaControllers,
   TextEditingController nomorControllers,
+  GlobalKey<FormState> formKey,
   VoidCallback setStateCallback,
   Contact newContact,
 ) {
@@ -303,15 +338,17 @@ Widget buttonSubmit(
           children: [
             ElevatedButton(
               onPressed: () {
-                String nama = namaControllers.text;
-                String phone = nomorControllers.text;
+                if (formKey.currentState!.validate()) {
+                  String nama = namaControllers.text;
+                  String phone = nomorControllers.text;
 
-                newContact = Contact(nama, phone);
-                contacts.add(newContact);
+                  newContact = Contact(nama, phone);
+                  contacts.add(newContact);
 
-                namaControllers.clear();
-                nomorControllers.clear();
-                setStateCallback();
+                  namaControllers.clear();
+                  nomorControllers.clear();
+                  setStateCallback();
+                }
               },
               child: const Text('Submit'),
               style: ElevatedButton.styleFrom(
@@ -377,7 +414,8 @@ class _ContactWidgetState extends State<contactWidget> {
                     children: [
                       IconButton(
                         icon: Icon(Icons.edit),
-                        onPressed: () => AlertEdit(context, index),
+                        onPressed: () =>
+                            AlertEdit(context, index, _scaffoldKey),
                       ),
                       IconButton(
                         icon: Icon(Icons.delete),
@@ -399,75 +437,63 @@ class _ContactWidgetState extends State<contactWidget> {
       ),
     );
   }
-}
 
-// Widget buildDatePicker(BuildContext context) {
-//   var _dueDate;
-//   return Container(
-//     margin: EdgeInsets.only(left: 20.0, right: 20.0),
-//     child: Column(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         Row(
-//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//           children: [
-//             const Text('Date'),
-//             TextButton(
-//               child: const Text('Select'),
-//               onPressed: () {},
-//             )
-//           ],
-//         ),
-//         // Text(DateFormat('dd-MM-yyyy').format(_dueDate)),
-//       ],
-//     ),
-//   );
-// }
+  final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
+      GlobalKey<ScaffoldMessengerState>();
 
-Future<String?> AlertEdit(BuildContext context, int index) {
-  final contact = contacts[index].name;
-  TextEditingController nameControllerEdit =
-      TextEditingController(text: contact[index].name);
+  Future<String?> AlertEdit(BuildContext context, int index,
+      GlobalKey<ScaffoldMessengerState> scaffoldKey) {
+    final contact = contacts[index].name;
+    TextEditingController nameControllerEdit =
+        TextEditingController(text: contact);
 
-  return showDialog<String>(
-    context: context,
-    builder: (BuildContext context) => AlertDialog(
-      title: const Text('AlertDialog Title'),
-      content: Column(
-        children: [
-          Text('nama'),
-          TextField(
-            controller: nameControllerEdit,
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('Edit Data Contact'),
+        content: Column(
+          children: [
+            Text('nama'),
+            TextField(
+              controller: nameControllerEdit,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
             onPressed: () {
-              //logika untuk menindih value berdsarkan index
-              print(contacts);
-              setState(() {
-                contacts[index].name = nameControllerEdit.text;
-              });
-              Navigator.pop(context);
-              print(index);
+              final enteredName = nameControllerEdit.text;
+              final namePattern = RegExp(
+                r'^[A-Z][a-z]* [A-Z][a-z]*$',
+              );
 
-              print('submit edit');
+              if (!namePattern.hasMatch(enteredName)) {
+                scaffoldKey.currentState?.showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Minimal 2 kata dengan menggunakan huruf kapital pada awal kata dan tidak mengandung angka atau simbol',
+                    ),
+                  ),
+                );
+              } else {
+                setState(() {
+                  contacts[index].name = nameControllerEdit.text;
+                });
+                Navigator.pop(context);
+                print(index);
+                print('submit edit');
+              }
             },
-            child: Text('Submit Edit')),
-        TextButton(
+            child: Text('Submit Edit'),
+          ),
+          TextButton(
             onPressed: () {
               Navigator.pop(context, 'Cancel');
             },
-            child: Text('Cancel'))
-      ],
-    ),
-  );
+            child: Text('Cancel'),
+          ),
+        ],
+      ),
+    );
+  }
 }
-
-      // 1. kita panggil semua data
-      // print('edit $data_kontak');
-      // 2. munculin box baru (show dialog/alert dialog)
-      // 3. di dalam box itu (show dialog/alert dialog) membuat form untuk memperharui data
-      // 4. masukkan data sebelumnya ke alert dialog tersebut(tempat kita untuk mendapatkan data baru)
-      // 5. ketika button di klik, maka data akan berganti

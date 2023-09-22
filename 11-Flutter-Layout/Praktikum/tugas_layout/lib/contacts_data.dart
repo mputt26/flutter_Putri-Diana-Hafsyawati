@@ -8,7 +8,7 @@ class Contact {
 }
 
 List<Contact> contacts = [
-  // Contact('Anisa Yuniarti', '+6264867252'),
-  // Contact('Ararya Hafidz', '+62823412635'),
-  // Contact('Delia Sepiana', '+628954109758'),
+  Contact('Anisa Yuniarti', '+6264867252'),
+  Contact('Ararya Hafidz', '+62823412635'),
+  Contact('Delia Sepiana', '+628954109758'),
 ];
