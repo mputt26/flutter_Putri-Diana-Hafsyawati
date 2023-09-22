@@ -132,7 +132,7 @@ class _HelloWorldState extends State<HelloWorld> {
             //form
             formInput(namaControllers, nomorControllers, formKey),
 
-            DatePicker(),
+            // DatePicker(),
             // BuildColorPicker(context, _currentColor),
             //button checkbox dan lingkaran
             buttonSubmit(
@@ -251,7 +251,7 @@ Widget formInput(
               controller: namaControllers,
               validator: (value) {
                 final trimmedValue = value!.trim();
-                final words = trimmedValue.split('');
+                final words = trimmedValue.split(' ');
                 if (words.length < 2) {
                   return 'Nama harus terdiri dari minimal 2 kata';
                 }
@@ -291,7 +291,20 @@ Widget formInput(
               ),
             ),
             SizedBox(height: 15.0),
-            TextField(
+            TextFormField(
+              validator: (value) {
+                final nomorTelepon = value!.trim();
+                if (nomorTelepon.isEmpty) {
+                  return 'Nomor telepon harus diisi';
+                }
+                if (!nomorTelepon.startsWith('0')) {
+                  return 'Nomor telepon harus dimulai dengan angka 0.';
+                }
+                if (!RegExp(r'^0[0-9]{7,10}$').hasMatch(nomorTelepon)) {
+                  return 'Nomor telepon tidak valid. Harus dimulai dengan 0 dan terdiri dari 8 hingga 10 angka.';
+                }
+                return null;
+              },
               controller: nomorControllers,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               keyboardType: TextInputType.number,
@@ -444,23 +457,83 @@ class _ContactWidgetState extends State<contactWidget> {
   Future<String?> AlertEdit(BuildContext context, int index,
       GlobalKey<ScaffoldMessengerState> scaffoldKey) {
     final contact = contacts[index].name;
+    final contact2 = contacts[index].phone;
+    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     TextEditingController nameControllerEdit =
         TextEditingController(text: contact);
+    TextEditingController nomorControllerEdit =
+        TextEditingController(text: contact2);
 
     return showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        title: const Text('Edit Data Contact'),
-        content: Column(
-          children: [
-            Text('nama'),
-            TextField(
-              controller: nameControllerEdit,
-            ),
-          ],
+        title: const Text('Edit Data Contact', textAlign: TextAlign.center),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        content: Container(
+          width: 400,
+          height: 170,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('nama'),
+              TextFormField(
+                validator: (value) {
+                  final trimmedValue = value!.trim();
+                  final words = trimmedValue.split(' ');
+                  if (words.length < 2) {
+                    return 'Nama harus terdiri dari minimal 2 kata';
+                  }
+                  for (final word in words) {
+                    if (!word.isEmpty &&
+                        !word
+                            .substring(0, 1)
+                            .toUpperCase()
+                            .contains(RegExp(r'[A-Z]'))) {
+                      return 'Setiap kata harus dimulai dengan huruf kapital.';
+                    }
+                  }
+                  //validasi kosong
+                  if (trimmedValue.isEmpty) {
+                    return 'Nama tidak boleh kosong';
+                  }
+                  if (trimmedValue
+                      .contains(RegExp(r'[0-9!@#%^&*(),.?":{}|<>]'))) {
+                    return 'Nama tidak boleh mengandung angka atau karakter khusus';
+                  }
+                  return null;
+                },
+                controller: nameControllerEdit,
+                // decoration: InputDecoration(
+                //   errorText:
+                //       _nameErrorText,
+                // ),
+              ),
+              SizedBox(height: 20),
+              Text('Nomor'),
+              TextFormField(
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  final nomorTelepon = value!.trim();
+                  if (nomorTelepon.isEmpty) {
+                    return 'Nomor telepon harus diisi oleh user.';
+                  }
+                  if (!nomorTelepon.startsWith('0')) {
+                    return 'Nomor telepon harus dimulai dengan angka 0.';
+                  }
+                  if (!RegExp(r'^0[0-9]{7,14}$').hasMatch(nomorTelepon)) {
+                    return 'Nomor telepon tidak valid. Harus dimulai dengan 0 dan terdiri dari 8 hingga 15 angka.';
+                  }
+                  return null;
+                },
+                controller: nomorControllerEdit,
+              ),
+            ],
+          ),
         ),
         actions: [
-          TextButton(
+          ElevatedButton(
             onPressed: () {
               final enteredName = nameControllerEdit.text;
               final namePattern = RegExp(
@@ -468,13 +541,6 @@ class _ContactWidgetState extends State<contactWidget> {
               );
 
               if (!namePattern.hasMatch(enteredName)) {
-                scaffoldKey.currentState?.showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Minimal 2 kata dengan menggunakan huruf kapital pada awal kata dan tidak mengandung angka atau simbol',
-                    ),
-                  ),
-                );
               } else {
                 setState(() {
                   contacts[index].name = nameControllerEdit.text;
