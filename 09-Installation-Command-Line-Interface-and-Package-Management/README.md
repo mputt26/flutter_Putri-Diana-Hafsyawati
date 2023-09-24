@@ -10,8 +10,9 @@
     ![Flutter clean](Screenshoot/soal5-prio1.png)
  3. Flutter Run 
     ![Flutter run](Screenshoot/soal3-prio1.png)
- 4. Flutter Emulator
+ 4. Flutter Build
+    ![Flutter run](Screenshoot/flutter_build.png)
  5. Flutter Create
  6. Flutter Channel
  7. Flutter Pub
- 8. Flutter Build
+ 8. Flutter Emulator
