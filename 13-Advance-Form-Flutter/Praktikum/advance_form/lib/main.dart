@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'contacts_data.dart';
 import 'package:intl/intl.dart';
+import 'contacts_data.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
     GlobalKey<ScaffoldMessengerState>();
 void main() {
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     debugShowCheckedModeBanner: false,
     home: MyApp(),
   ));
@@ -29,151 +30,55 @@ class HelloWorld extends StatefulWidget {
 }
 
 class _HelloWorldState extends State<HelloWorld> {
-  DateTime _dueDate = DateTime.now();
-  final currentDate = DateTime.now();
-  Contact newContact = Contact('', '', DateTime.now());
-  List<Contact> contacts = [];
-  @override
-  void initState() {
-    super.initState();
-    contacts = contacts;
-    _dueDate = DateTime.now();
-  }
-
+  var formKey = GlobalKey<FormState>();
   var namaControllers = TextEditingController();
   var nomorControllers = TextEditingController();
+  DateTime _dueDate = DateTime.now();
+  final currentDate = DateTime.now();
+  Color _currentColor = const Color(0xFFE7E0EC);
 
-  var formKey = GlobalKey<FormState>();
-  Color _currentColor = Colors.orange;
-  @override
-  void dispose() {
-    namaControllers.dispose();
-    nomorControllers.dispose();
-    super.dispose();
-  }
+  bool isDataSubmitted = false;
 
-  void deleteContact(int index) {
-    setState(() {
-      contacts.removeAt(index);
-    });
-  }
-
-  void _showErrorSnackbar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: Duration(seconds: 5),
-      ),
-    );
-  }
+  List<Contact> contacts = [];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Contact'),
-        centerTitle: true,
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: Icon(Icons.menu),
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-            );
-          },
-        ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {},
-          )
-        ],
-      ),
-      drawer: Drawer(
-        child: ListView(
-          children: <Widget>[
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-              child: Text('Ujicoba'),
-            ),
-            ListTile(
-              title: Text('judul 1'),
-              onTap: () {},
-            ),
-            ListTile(
-              title: Text('judul 2'),
-              onTap: () {},
-            ),
-          ],
-        ),
-      ),
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            //icon hp
-            iconPhone(),
-            SizedBox(
-              height: 15.0,
+            Container(
+              margin: const EdgeInsets.only(top: 10.0),
+              child: const Icon(
+                Icons.phone_android,
+                size: 40,
+                color: Colors.black,
+              ),
             ),
-            //judul
-            tittleContact(),
-            SizedBox(
-              height: 10.0,
+            const SizedBox(height: 15.0),
+            const Text('Create New Contact'),
+            const SizedBox(height: 10.0),
+            Container(
+              margin: const EdgeInsets.only(left: 20.0, right: 20.0),
+              child: const Text(
+                  'A dialog is a type of modal window that appears in front of app content to provide critical information, or prompt for a decision to be made. '),
             ),
-            //text
-            longText(),
-            Divider(thickness: 2.0, indent: 20.0, endIndent: 20.0),
-
-            //form
-            formInput(namaControllers, nomorControllers, formKey),
-
+            const Divider(thickness: 2.0, indent: 20.0, endIndent: 20.0),
+            const SizedBox(height: 20.0),
+            nameField(),
+            const SizedBox(height: 20.0),
+            phoneNumberField(),
             DatePicker(),
-            // BuildColorPicker(context, _currentColor),
-            //button checkbox dan lingkaran
-            buttonSubmit(
-              namaControllers,
-              nomorControllers,
-              formKey,
-              () {
-                setState(() {
-                  contacts.add(newContact);
-                });
-              },
-              newContact,
-            ),
-
-            SizedBox(
-              height: 20.0,
-            ),
-            contactTittle(),
-            contactWidget(),
+            const SizedBox(height: 20.0),
+            buildColorPicker(context),
+            const SizedBox(height: 20.0),
+            submitButton(),
+            const SizedBox(height: 20.0),
+            submittedDataList(),
           ],
         ),
-      ),
-      //Navigation Bar
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Color(0xFF6200EE),
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Favorites',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.info),
-            label: 'Information',
-          ),
-        ],
       ),
     );
   }
@@ -217,366 +122,440 @@ class _HelloWorldState extends State<HelloWorld> {
       ],
     );
   }
-}
 
-Widget iconPhone() {
-  return Container(
-    margin: EdgeInsets.only(top: 10.0),
-    child: Icon(
-      Icons.phone_android,
-      size: 40,
-      color: Colors.black,
-    ),
-  );
-}
-
-Widget tittleContact() {
-  return Container(
-    child: Text('Create New Contact'),
-  );
-}
-
-Widget longText() {
-  return Container(
-    margin: EdgeInsets.only(left: 20.0, right: 20.0),
-    child: Text(
-        'A dialog is a type of modal window that appears in front of app content to provide critical information, or prompt for a decision to be made. '),
-  );
-}
-
-Widget formInput(
-  TextEditingController namaControllers,
-  TextEditingController nomorControllers,
-  GlobalKey<FormState> formKey,
-) {
-  return Container(
-    child: Container(
-      margin: EdgeInsets.only(right: 20.0, left: 20.0),
-      child: Form(
-        key: formKey,
-        child: Column(
-          children: [
-            TextFormField(
-              controller: namaControllers,
-              validator: (value) {
-                final trimmedValue = value!.trim();
-                final words = trimmedValue.split(' ');
-                if (words.length < 2) {
-                  return 'Nama harus terdiri dari minimal 2 kata';
-                }
-                for (final word in words) {
-                  if (!word.isEmpty &&
-                      !word
-                          .substring(0, 1)
-                          .toUpperCase()
-                          .contains(RegExp(r'[A-Z]'))) {
-                    return 'Setiap kata harus dimulai dengan huruf kapital.';
-                  }
-                }
-                //validasi kosong
-                if (trimmedValue.isEmpty) {
-                  return 'Nama tidak boleh kosong';
-                }
-                if (trimmedValue
-                    .contains(RegExp(r'[0-9!@#%^&*(),.?":{}|<>]'))) {
-                  return 'Nama tidak boleh mengandung angka atau karakter khusus';
-                }
-                return null;
-              },
-              decoration: InputDecoration(
-                labelText: 'Name',
-                hintText: 'Insert Your Name',
-                fillColor: Color.fromARGB(100, 103, 80, 164),
-                filled: true,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(6.0),
-                    topRight: Radius.circular(6.0),
-                  ),
-                ),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black, width: 1.0),
-                ),
-              ),
-            ),
-            SizedBox(height: 15.0),
-            TextFormField(
-              validator: (value) {
-                final nomorTelepon = value!.trim();
-                if (nomorTelepon.isEmpty) {
-                  return 'Nomor telepon harus diisi';
-                }
-                if (!nomorTelepon.startsWith('0')) {
-                  return 'Nomor telepon harus dimulai dengan angka 0.';
-                }
-                if (!RegExp(r'^0[0-9]{7,10}$').hasMatch(nomorTelepon)) {
-                  return 'Nomor telepon tidak valid. Harus dimulai dengan 0 dan terdiri dari 8 hingga 10 angka.';
-                }
-                return null;
-              },
-              controller: nomorControllers,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: 'Nomor',
-                hintText: '+62...',
-                fillColor: Color.fromARGB(100, 103, 80, 164),
-                filled: true,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(6.0),
-                    topRight: Radius.circular(6.0),
-                  ),
-                ),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black, width: 1.0),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 15.0,
-            ),
-          ],
-        ),
-      ),
-    ),
-  );
-}
-
-Widget buttonSubmit(
-  TextEditingController namaControllers,
-  TextEditingController nomorControllers,
-  GlobalKey<FormState> formKey,
-  VoidCallback setStateCallback,
-  Contact newContact,
-) {
-  return Container(
-    margin: EdgeInsets.only(right: 20.0),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                if (formKey.currentState!.validate()) {
-                  String nama = namaControllers.text;
-                  String phone = nomorControllers.text;
-
-                  // Tambahkan kontak baru ke dalam daftar
-                  contacts.add(Contact(nama, phone, DateTime.now()));
-
-                  // Bersihkan isi controller
-                  namaControllers.clear();
-                  nomorControllers.clear();
-                }
-              },
-              child: const Text('Submit'),
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                ),
-                backgroundColor: Color.fromARGB(255, 103, 80, 164),
-              ),
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
-}
-
-Widget contactTittle() {
-  return Container(
-    child: Text(
-      'List Contacts',
-      style: TextStyle(fontSize: 30.0),
-    ),
-  );
-}
-
-class contactWidget extends StatefulWidget {
-  @override
-  _ContactWidgetState createState() => _ContactWidgetState();
-}
-
-class _ContactWidgetState extends State<contactWidget> {
-  // List<Contact> contacts = []; // Move the contacts list here
-
-  @override
-  Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
+  nameField() {
     return Container(
-      width: screenWidth,
-      height: 200,
-      decoration: BoxDecoration(
-        color: Color.fromARGB(64, 255, 200, 253),
-        borderRadius: BorderRadius.circular(20.0),
-      ),
-      margin: EdgeInsets.all(20.0),
-      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: ListView.builder(
-        itemCount: contacts.length, // Use the contacts list from the state
-        itemBuilder: (BuildContext context, int index) {
-          final contact = contacts[index];
-          final avatarText = contact.name[0];
-          return ListTile(
-            leading: CircleAvatar(
-              child: Text(avatarText),
-              backgroundColor: Color.fromARGB(184, 102, 80, 164),
-            ),
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(contacts[index].name),
-                Text(
-                  contacts[index].phone,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            subtitle: Text(
-              DateFormat('dd-MM-yyyy').format(contacts[index]
-                  .date), // Ganti _dueDate dengan tanggal dari kontak
-            ),
-            trailing: Row(
-              children: [
-                IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () => AlertEdit(context, index, _scaffoldKey),
-                ),
-                IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () {
-                    setState(() {
-                      contacts.removeAt(index);
-                    });
-                  },
-                ),
-              ],
-            ),
-            onTap: () {},
-          );
+      margin: const EdgeInsets.only(right: 20.0, left: 20.0),
+      child: TextFormField(
+        controller: namaControllers,
+        validator: (value) {
+          final trimmedValue = value!.trim();
+          final words = trimmedValue.split(' ');
+          if (words.length < 2) {
+            return 'Nama harus terdiri dari minimal 2 kata';
+          }
+          for (final word in words) {
+            if (!word.isEmpty &&
+                !word
+                    .substring(0, 1)
+                    .toUpperCase()
+                    .contains(RegExp(r'[A-Z]'))) {
+              return 'Setiap kata harus dimulai dengan huruf kapital.';
+            }
+          }
+          //validasi kosong
+          if (trimmedValue.isEmpty) {
+            return 'Nama tidak boleh kosong';
+          }
+          if (trimmedValue.contains(RegExp(r'[0-9!@#%^&*(),.?":{}|<>]'))) {
+            return 'Nama tidak boleh mengandung angka atau karakter khusus';
+          }
+          return null;
         },
+        decoration: const InputDecoration(
+          labelText: 'Name',
+          hintText: 'Insert Your Name',
+          fillColor: Color.fromARGB(100, 103, 80, 164),
+          filled: true,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(6.0),
+              topRight: Radius.circular(6.0),
+            ),
+          ),
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.black, width: 1.0),
+          ),
+        ),
       ),
     );
   }
 
-  Future<String?> AlertEdit(
-    BuildContext context,
-    int index,
-    GlobalKey<ScaffoldMessengerState> scaffoldKey,
-  ) {
-    final contact = contacts[index].name;
-    final contact2 = contacts[index].phone;
-
-    TextEditingController nameControllerEdit =
-        TextEditingController(text: contact);
-    TextEditingController nomorControllerEdit =
-        TextEditingController(text: contact2);
-
-    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
-    return showDialog<String>(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: const Text('Edit Data Contact', textAlign: TextAlign.center),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        content: Container(
-          width: 400,
-          height: 200,
-          child: Form(
-            key: formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('nama'),
-                TextFormField(
-                  validator: (value) {
-                    // Validasi Nama
-                    final trimmedValue = value!.trim();
-                    final words = trimmedValue.split(' ');
-                    if (words.length < 2) {
-                      return 'Nama harus terdiri dari minimal 2 kata';
-                    }
-                    for (final word in words) {
-                      if (!word.isEmpty &&
-                          !word
-                              .substring(0, 1)
-                              .toUpperCase()
-                              .contains(RegExp(r'[A-Z]'))) {
-                        return 'Setiap kata harus dimulai dengan huruf kapital.';
-                      }
-                    }
-                    // Validasi kosong
-                    if (trimmedValue.isEmpty) {
-                      return 'Nama tidak boleh kosong';
-                    }
-                    if (trimmedValue
-                        .contains(RegExp(r'[0-9!@#%^&*(),.?":{}|<>]'))) {
-                      return 'Nama tidak boleh mengandung angka atau karakter khusus';
-                    }
-                    return null;
-                  },
-                  controller: nameControllerEdit,
-                ),
-                SizedBox(height: 20),
-                Text('Nomor'),
-                TextFormField(
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    final nomorTelepon = value!.trim();
-                    if (nomorTelepon.isEmpty) {
-                      return 'Nomor telepon harus diisi oleh user.';
-                    }
-                    if (!nomorTelepon.startsWith('0')) {
-                      return 'Nomor telepon harus dimulai dengan angka 0.';
-                    }
-                    if (!RegExp(r'^0[0-9]{7,14}$').hasMatch(nomorTelepon)) {
-                      return 'Nomor telepon tidak valid. Harus dimulai dengan 0 dan terdiri dari 8 hingga 15 angka.';
-                    }
-                    return null;
-                  },
-                  controller: nomorControllerEdit,
-                ),
-              ],
+  phoneNumberField() {
+    return Container(
+      margin: const EdgeInsets.only(right: 20.0, left: 20.0),
+      child: TextFormField(
+        validator: (value) {
+          final nomorTelepon = value!.trim();
+          if (nomorTelepon.isEmpty) {
+            return 'Nomor telepon harus diisi';
+          }
+          if (!nomorTelepon.startsWith('0')) {
+            return 'Nomor telepon harus dimulai dengan angka 0.';
+          }
+          if (!RegExp(r'^0[0-9]{7,10}$').hasMatch(nomorTelepon)) {
+            return 'Nomor telepon tidak valid. Harus dimulai dengan 0 dan terdiri dari 8 hingga 10 angka.';
+          }
+          return null;
+        },
+        controller: nomorControllers,
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        keyboardType: TextInputType.number,
+        decoration: const InputDecoration(
+          labelText: 'Nomor',
+          hintText: '+62...',
+          fillColor: Color.fromARGB(100, 103, 80, 164),
+          filled: true,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(6.0),
+              topRight: Radius.circular(6.0),
             ),
           ),
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.black, width: 1.0),
+          ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              if (formKey.currentState!.validate()) {
-                final enteredName = nameControllerEdit.text;
-                final enteredPhone = nomorControllerEdit.text;
-                final namePattern = RegExp(
-                  r'^[A-Z][a-z]* [A-Z][a-z]*$',
-                );
-                if (!namePattern.hasMatch(enteredName)) {
-                } else {
-                  setState(() {
-                    contacts[index].name = enteredName;
-                    contacts[index].phone = enteredPhone;
-                  });
-                  Navigator.pop(context);
-                  print(index);
-                  print('Simpan');
-                }
-              }
-            },
-            child: const Text('Simpan'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context, 'Cancle');
-            },
-            child: const Text('Cancle'),
-          ),
-        ],
       ),
+    );
+  }
+
+  Widget buildColorPicker(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('Color'),
+        const SizedBox(height: 10),
+        Container(
+          height: 100,
+          width: double.infinity,
+          color: _currentColor,
+        ),
+        const SizedBox(height: 10),
+        Center(
+          child: ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStatePropertyAll(
+                _currentColor,
+              ),
+            ),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: const Text('Pick your color'),
+                    content: SingleChildScrollView(
+                      child: ColorPicker(
+                        pickerColor: _currentColor,
+                        onColorChanged: (color) {
+                          setState(() {
+                            _currentColor = color;
+                          });
+                        },
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text('Save'),
+                      )
+                    ],
+                  );
+                },
+              );
+            },
+            child: const Text(
+              'Pick Color',
+              style: TextStyle(
+                color: Color(0xFF49454F),
+              ),
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  submitButton() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        ElevatedButton(
+          onPressed: _handleSubmit,
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            backgroundColor: const Color(0xFF6750A4),
+          ),
+          child: const Text('Submit'),
+        ),
+      ],
+    );
+  }
+
+  void _handleSubmit() async {
+    final name = namaControllers.text;
+    final phoneNumber = nomorControllers.text;
+    final currentDate = DateTime.now();
+    final currentColor = _currentColor;
+
+    final contact = Contact(
+      name,
+      phoneNumber,
+      currentDate,
+      currentColor,
+    );
+    contacts.add(contact);
+
+    setState(() {
+      isDataSubmitted = true;
+    });
+
+    namaControllers.clear();
+    nomorControllers.clear();
+  }
+
+  submittedDataList() {
+    return Column(
+      children: [
+        const Text(
+          'List Contacts',
+          style: TextStyle(
+            color: Color(0xFF1C1B1F),
+            fontFamily: 'roboto',
+            fontSize: 24,
+            fontStyle: FontStyle.normal,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+        const SizedBox(height: 21),
+        ListView.builder(
+          shrinkWrap: true,
+          itemCount: contacts.length,
+          itemBuilder: (context, index) {
+            final contact = contacts[index];
+
+            return ListTile(
+              title: RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: contact.name,
+                      style: const TextStyle(
+                        fontFamily: 'roboto',
+                        fontSize: 16,
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xFF1C1B1F),
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    const TextSpan(text: '\n'), // Add a newline separator
+                    TextSpan(
+                      text: contact.phoneNumber,
+                      style: const TextStyle(
+                        fontFamily: 'roboto',
+                        fontSize: 14,
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xFF1C1B1F),
+                        letterSpacing: 0.25,
+                      ),
+                    ),
+                    const TextSpan(text: '\n'),
+                    TextSpan(
+                      text: DateFormat('dd-MM-yyyy').format(contact.date),
+                      style: const TextStyle(
+                        fontFamily: 'roboto',
+                        fontSize: 14,
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xFF1C1B1F),
+                        letterSpacing: 0.25,
+                      ),
+                    ),
+                    const TextSpan(text: '\n'),
+                    TextSpan(
+                      text: 'Color: ',
+                      style: const TextStyle(
+                        fontFamily: 'roboto',
+                        fontSize: 14,
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xFF1C1B1F),
+                        letterSpacing: 0.25,
+                      ),
+                      children: [
+                        WidgetSpan(
+                          child: Container(
+                            width: 20,
+                            height: 20,
+                            color: contact.color,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: () {
+                      editContact(index);
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: () {
+                      deleteContact(index);
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  void deleteContact(int index) {
+    setState(() {
+      contacts.removeAt(index);
+    });
+  }
+
+  void editContact(int index) {
+    final contact = contacts[index];
+
+    TextEditingController nameController =
+        TextEditingController(text: contact.name);
+    TextEditingController phoneNumberController =
+        TextEditingController(text: contact.phoneNumber);
+    DateTime editedDate = contact.date;
+    Color editedColor = contact.color;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Edit Contact'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(labelText: 'Name'),
+              ),
+              TextField(
+                controller: phoneNumberController,
+                decoration: const InputDecoration(labelText: 'Phone Number'),
+                keyboardType: TextInputType.number,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Date'),
+                  TextButton(
+                    onPressed: () async {
+                      final selectDate = await showDatePicker(
+                        context: context,
+                        initialDate: editedDate,
+                        firstDate: DateTime(1991),
+                        lastDate: DateTime(currentDate.year + 5),
+                      );
+
+                      if (selectDate != null) {
+                        setState(() {
+                          editedDate = selectDate;
+                        });
+                      }
+                    },
+                    child: const Text('Select'),
+                  ),
+                ],
+              ),
+              const Text('Color'),
+              const SizedBox(height: 10),
+              Container(
+                height: 100,
+                width: double.infinity,
+                color: editedColor, // Display the current color
+              ),
+              const SizedBox(height: 10),
+              Center(
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(
+                      editedColor,
+                    ),
+                  ),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text('Pick your color'),
+                          content: SingleChildScrollView(
+                            child: ColorPicker(
+                              pickerColor:
+                                  editedColor, // Pass the current color
+                              onColorChanged: (color) {
+                                setState(() {
+                                  editedColor =
+                                      color; // Update the edited color
+                                });
+                              },
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text('Save'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  child: const Text(
+                    'Pick Color',
+                    style: TextStyle(
+                      color: Color(0xFF49454F),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                final newName = nameController.text;
+                final newPhoneNumber = phoneNumberController.text;
+
+                setState(() {
+                  contacts[index] = Contact(
+                    newName,
+                    newPhoneNumber,
+                    editedDate,
+                    editedColor,
+                    // Update the color in the contact object
+                  );
+                });
+
+                Navigator.of(context).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                backgroundColor: const Color(0xFF6750A4),
+              ),
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
