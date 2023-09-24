@@ -31,12 +31,13 @@ class HelloWorld extends StatefulWidget {
 class _HelloWorldState extends State<HelloWorld> {
   DateTime _dueDate = DateTime.now();
   final currentDate = DateTime.now();
-  Contact newContact = Contact('', '');
+  Contact newContact = Contact('', '', DateTime.now());
   List<Contact> contacts = [];
   @override
   void initState() {
     super.initState();
     contacts = contacts;
+    _dueDate = DateTime.now();
   }
 
   var namaControllers = TextEditingController();
@@ -184,26 +185,35 @@ class _HelloWorldState extends State<HelloWorld> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('Date'),
-            TextButton(
-              child: const Text('Select'),
-              onPressed: () async {
-                final selectData = await showDatePicker(
-                  context: context,
-                  initialDate: currentDate,
-                  firstDate: DateTime(1990),
-                  lastDate: DateTime(currentDate.year + 5),
-                );
-                setState(() {
-                  if (selectData != null) {
-                    _dueDate = selectData;
-                  }
-                });
-              },
+            Padding(
+              padding: EdgeInsets.only(left: 20.0),
+              child: const Text('Date'),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 20.0),
+              child: TextButton(
+                child: const Text('Select'),
+                onPressed: () async {
+                  final selectData = await showDatePicker(
+                    context: context,
+                    initialDate: _dueDate,
+                    firstDate: DateTime(1990),
+                    lastDate: DateTime(currentDate.year + 5),
+                  );
+                  setState(() {
+                    if (selectData != null) {
+                      _dueDate = selectData;
+                    }
+                  });
+                },
+              ),
             )
           ],
         ),
-        Text(DateFormat('dd-MM-yyyy').format(_dueDate)),
+        Padding(
+          padding: const EdgeInsets.only(left: 20.0),
+          child: Text(DateFormat('dd-MM-yyyy').format(_dueDate)),
+        ),
       ],
     );
   }
@@ -354,12 +364,12 @@ Widget buttonSubmit(
                   String nama = namaControllers.text;
                   String phone = nomorControllers.text;
 
-                  newContact = Contact(nama, phone);
-                  contacts.add(newContact);
+                  // Tambahkan kontak baru ke dalam daftar
+                  contacts.add(Contact(nama, phone, DateTime.now()));
 
+                  // Bersihkan isi controller
                   namaControllers.clear();
                   nomorControllers.clear();
-                  setStateCallback();
                 }
               },
               child: const Text('Submit'),
@@ -416,33 +426,36 @@ class _ContactWidgetState extends State<contactWidget> {
               child: Text(avatarText),
               backgroundColor: Color.fromARGB(184, 102, 80, 164),
             ),
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(contacts[index].name),
-                Padding(
-                  padding: const EdgeInsets.only(left: 20.0),
-                  child: Row(
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.edit),
-                        onPressed: () =>
-                            AlertEdit(context, index, _scaffoldKey),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.delete),
-                        onPressed: () {
-                          setState(() {
-                            contacts.removeAt(index);
-                          });
-                        },
-                      ),
-                    ],
-                  ),
+                Text(
+                  contacts[index].phone,
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ],
             ),
-            subtitle: Text(contacts[index].phone),
+            subtitle: Text(
+              DateFormat('dd-MM-yyyy').format(contacts[index]
+                  .date), // Ganti _dueDate dengan tanggal dari kontak
+            ),
+            trailing: Row(
+              children: [
+                IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () => AlertEdit(context, index, _scaffoldKey),
+                ),
+                IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () {
+                    setState(() {
+                      contacts.removeAt(index);
+                    });
+                  },
+                ),
+              ],
+            ),
             onTap: () {},
           );
         },
@@ -450,113 +463,6 @@ class _ContactWidgetState extends State<contactWidget> {
     );
   }
 
-  // final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
-  //     GlobalKey<ScaffoldMessengerState>();
-
-  // Future<String?> AlertEdit(BuildContext context, int index,
-  //     GlobalKey<ScaffoldMessengerState> scaffoldKey) {
-  //   final contact = contacts[index].name;
-  //   final contact2 = contacts[index].phone;
-  //   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  //   TextEditingController nameControllerEdit =
-  //       TextEditingController(text: contact);
-  //   TextEditingController nomorControllerEdit =
-  //       TextEditingController(text: contact2);
-
-  //   return showDialog<String>(
-  //     context: context,
-  //     builder: (BuildContext context) => AlertDialog(
-  //       title: const Text('Edit Data Contact', textAlign: TextAlign.center),
-  //       shape: RoundedRectangleBorder(
-  //         borderRadius: BorderRadius.circular(10.0),
-  //       ),
-  //       content: Container(
-  //         width: 400,
-  //         height: 170,
-  //         // child: Column(
-  //         //   mainAxisSize: MainAxisSize.min,
-  //         //   children: [
-  //         //     Text('nama'),
-  //         //     TextFormField(
-  //         //       validator: (value) {
-  //         //         final trimmedValue = value!.trim();
-  //         //         final words = trimmedValue.split(' ');
-  //         //         if (words.length < 2) {
-  //         //           return 'Nama harus terdiri dari minimal 2 kata';
-  //         //         }
-  //         //         for (final word in words) {
-  //         //           if (!word.isEmpty &&
-  //         //               !word
-  //         //                   .substring(0, 1)
-  //         //                   .toUpperCase()
-  //         //                   .contains(RegExp(r'[A-Z]'))) {
-  //         //             return 'Setiap kata harus dimulai dengan huruf kapital.';
-  //         //           }
-  //         //         }
-  //         //         //validasi kosong
-  //         //         if (trimmedValue.isEmpty) {
-  //         //           return 'Nama tidak boleh kosong';
-  //         //         }
-  //         //         if (trimmedValue
-  //         //             .contains(RegExp(r'[0-9!@#%^&*(),.?":{}|<>]'))) {
-  //         //           return 'Nama tidak boleh mengandung angka atau karakter khusus';
-  //         //         }
-  //         //         return null;
-  //         //       },
-  //         //       controller: nameControllerEdit,
-  //         //     ),
-  //         //     SizedBox(height: 20),
-  //         //     Text('Nomor'),
-  //         //     TextFormField(
-  //         //       keyboardType: TextInputType.number,
-  //         //       validator: (value) {
-  //         //         final nomorTelepon = value!.trim();
-  //         //         if (nomorTelepon.isEmpty) {
-  //         //           return 'Nomor telepon harus diisi oleh user.';
-  //         //         }
-  //         //         if (!nomorTelepon.startsWith('0')) {
-  //         //           return 'Nomor telepon harus dimulai dengan angka 0.';
-  //         //         }
-  //         //         if (!RegExp(r'^0[0-9]{7,14}$').hasMatch(nomorTelepon)) {
-  //         //           return 'Nomor telepon tidak valid. Harus dimulai dengan 0 dan terdiri dari 8 hingga 15 angka.';
-  //         //         }
-  //         //         return null;
-  //         //       },
-  //         //       controller: nomorControllerEdit,
-  //         //     ),
-  //         //   ],
-  //         // ),
-  //       ),
-  //       actions: [
-  //         ElevatedButton(
-  //           onPressed: () {
-  //             final enteredName = nameControllerEdit.text;
-  //             final namePattern = RegExp(
-  //               r'^[A-Z][a-z]* [A-Z][a-z]*$',
-  //             );
-
-  //             if (!namePattern.hasMatch(enteredName)) {
-  //             } else {
-  //               setState(() {
-  //                 contacts[index].name = nameControllerEdit.text;
-  //               });
-  //               Navigator.pop(context);
-  //               print(index);
-  //               print('submit edit');
-  //             }
-  //           },
-  //           child: Text('Submit Edit'),
-  //         ),
-  //         TextButton(
-  //           onPressed: () {
-  //             Navigator.pop(context, 'Cancel');
-  //           },
-  //           child: Text('Cancel'),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
   Future<String?> AlertEdit(
     BuildContext context,
     int index,
@@ -659,7 +565,6 @@ class _ContactWidgetState extends State<contactWidget> {
                   print(index);
                   print('Simpan');
                 }
-                // Navigator pop.(context)();
               }
             },
             child: const Text('Simpan'),
