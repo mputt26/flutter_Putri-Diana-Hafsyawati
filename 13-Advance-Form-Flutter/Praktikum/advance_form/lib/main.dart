@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'contacts_data.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:file_picker/file_picker.dart';
 
 final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -36,6 +37,7 @@ class _HelloWorldState extends State<HelloWorld> {
   DateTime _dueDate = DateTime.now();
   final currentDate = DateTime.now();
   Color _currentColor = const Color(0xFFE7E0EC);
+  List<String> selectedFilePaths = [];
 
   bool isDataSubmitted = false;
 
@@ -73,6 +75,8 @@ class _HelloWorldState extends State<HelloWorld> {
             DatePicker(),
             const SizedBox(height: 20.0),
             buildColorPicker(context),
+            const SizedBox(height: 20.0),
+            filePickerButton(),
             const SizedBox(height: 20.0),
             submitButton(),
             const SizedBox(height: 20.0),
@@ -293,11 +297,17 @@ class _HelloWorldState extends State<HelloWorld> {
     final currentDate = DateTime.now();
     final currentColor = _currentColor;
 
+    List<String> selectedFiles = [];
+    if (selectedFilePaths.isNotEmpty) {
+      selectedFiles.addAll(selectedFilePaths);
+    }
+
     final contact = Contact(
       name,
       phoneNumber,
       currentDate,
       currentColor,
+      selectedFilePaths,
     );
     contacts.add(contact);
 
@@ -307,6 +317,41 @@ class _HelloWorldState extends State<HelloWorld> {
 
     namaControllers.clear();
     nomorControllers.clear();
+  }
+
+  Widget filePickerButton() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ElevatedButton(
+          onPressed: _handleFilePick,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFFE7E0EC),
+          ),
+          child: const Text(
+            'Pick Files',
+            style: TextStyle(color: Colors.black),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<List<String>> _handleFilePick() async {
+    final result = await FilePicker.platform.pickFiles();
+    final selectedFiles = <String>[];
+
+    if (result != null) {
+      final List<PlatformFile> files = result.files;
+      for (final file in files) {
+        final filePath = file.path;
+        if (filePath != null) {
+          selectedFilePaths.add(filePath);
+        }
+      }
+    }
+
+    return selectedFiles;
   }
 
   submittedDataList() {
@@ -539,6 +584,7 @@ class _HelloWorldState extends State<HelloWorld> {
                     newPhoneNumber,
                     editedDate,
                     editedColor,
+                    selectedFilePaths,
                     // Update the color in the contact object
                   );
                 });

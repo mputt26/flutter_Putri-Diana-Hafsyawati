@@ -5,11 +5,13 @@ class Contact {
   final String phoneNumber;
   final DateTime date;
   final Color color;
+  final List<String> selectedFiles;
 
   Contact(
     this.name,
     this.phoneNumber,
     this.date,
-    this.color
+    this.color,
+    this.selectedFiles,
   );
 }
