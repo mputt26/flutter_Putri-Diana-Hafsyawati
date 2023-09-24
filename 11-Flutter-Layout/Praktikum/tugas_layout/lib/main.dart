@@ -3,18 +3,17 @@ import 'package:flutter/services.dart';
 import 'contacts_data.dart';
 import 'package:intl/intl.dart';
 
+final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
+    GlobalKey<ScaffoldMessengerState>();
 void main() {
-  final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
-      GlobalKey<ScaffoldMessengerState>();
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: MyApp(_scaffoldKey),
+    home: MyApp(),
   ));
 }
 
 class MyApp extends StatelessWidget {
-  final GlobalKey<ScaffoldMessengerState> scaffoldKey;
-  const MyApp(this.scaffoldKey, {Key? key}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -451,18 +450,127 @@ class _ContactWidgetState extends State<contactWidget> {
     );
   }
 
-  final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
-      GlobalKey<ScaffoldMessengerState>();
+  // final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
+  //     GlobalKey<ScaffoldMessengerState>();
 
-  Future<String?> AlertEdit(BuildContext context, int index,
-      GlobalKey<ScaffoldMessengerState> scaffoldKey) {
+  // Future<String?> AlertEdit(BuildContext context, int index,
+  //     GlobalKey<ScaffoldMessengerState> scaffoldKey) {
+  //   final contact = contacts[index].name;
+  //   final contact2 = contacts[index].phone;
+  //   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  //   TextEditingController nameControllerEdit =
+  //       TextEditingController(text: contact);
+  //   TextEditingController nomorControllerEdit =
+  //       TextEditingController(text: contact2);
+
+  //   return showDialog<String>(
+  //     context: context,
+  //     builder: (BuildContext context) => AlertDialog(
+  //       title: const Text('Edit Data Contact', textAlign: TextAlign.center),
+  //       shape: RoundedRectangleBorder(
+  //         borderRadius: BorderRadius.circular(10.0),
+  //       ),
+  //       content: Container(
+  //         width: 400,
+  //         height: 170,
+  //         // child: Column(
+  //         //   mainAxisSize: MainAxisSize.min,
+  //         //   children: [
+  //         //     Text('nama'),
+  //         //     TextFormField(
+  //         //       validator: (value) {
+  //         //         final trimmedValue = value!.trim();
+  //         //         final words = trimmedValue.split(' ');
+  //         //         if (words.length < 2) {
+  //         //           return 'Nama harus terdiri dari minimal 2 kata';
+  //         //         }
+  //         //         for (final word in words) {
+  //         //           if (!word.isEmpty &&
+  //         //               !word
+  //         //                   .substring(0, 1)
+  //         //                   .toUpperCase()
+  //         //                   .contains(RegExp(r'[A-Z]'))) {
+  //         //             return 'Setiap kata harus dimulai dengan huruf kapital.';
+  //         //           }
+  //         //         }
+  //         //         //validasi kosong
+  //         //         if (trimmedValue.isEmpty) {
+  //         //           return 'Nama tidak boleh kosong';
+  //         //         }
+  //         //         if (trimmedValue
+  //         //             .contains(RegExp(r'[0-9!@#%^&*(),.?":{}|<>]'))) {
+  //         //           return 'Nama tidak boleh mengandung angka atau karakter khusus';
+  //         //         }
+  //         //         return null;
+  //         //       },
+  //         //       controller: nameControllerEdit,
+  //         //     ),
+  //         //     SizedBox(height: 20),
+  //         //     Text('Nomor'),
+  //         //     TextFormField(
+  //         //       keyboardType: TextInputType.number,
+  //         //       validator: (value) {
+  //         //         final nomorTelepon = value!.trim();
+  //         //         if (nomorTelepon.isEmpty) {
+  //         //           return 'Nomor telepon harus diisi oleh user.';
+  //         //         }
+  //         //         if (!nomorTelepon.startsWith('0')) {
+  //         //           return 'Nomor telepon harus dimulai dengan angka 0.';
+  //         //         }
+  //         //         if (!RegExp(r'^0[0-9]{7,14}$').hasMatch(nomorTelepon)) {
+  //         //           return 'Nomor telepon tidak valid. Harus dimulai dengan 0 dan terdiri dari 8 hingga 15 angka.';
+  //         //         }
+  //         //         return null;
+  //         //       },
+  //         //       controller: nomorControllerEdit,
+  //         //     ),
+  //         //   ],
+  //         // ),
+  //       ),
+  //       actions: [
+  //         ElevatedButton(
+  //           onPressed: () {
+  //             final enteredName = nameControllerEdit.text;
+  //             final namePattern = RegExp(
+  //               r'^[A-Z][a-z]* [A-Z][a-z]*$',
+  //             );
+
+  //             if (!namePattern.hasMatch(enteredName)) {
+  //             } else {
+  //               setState(() {
+  //                 contacts[index].name = nameControllerEdit.text;
+  //               });
+  //               Navigator.pop(context);
+  //               print(index);
+  //               print('submit edit');
+  //             }
+  //           },
+  //           child: Text('Submit Edit'),
+  //         ),
+  //         TextButton(
+  //           onPressed: () {
+  //             Navigator.pop(context, 'Cancel');
+  //           },
+  //           child: Text('Cancel'),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+  Future<String?> AlertEdit(
+    BuildContext context,
+    int index,
+    GlobalKey<ScaffoldMessengerState> scaffoldKey,
+  ) {
     final contact = contacts[index].name;
     final contact2 = contacts[index].phone;
-    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
     TextEditingController nameControllerEdit =
         TextEditingController(text: contact);
     TextEditingController nomorControllerEdit =
         TextEditingController(text: contact2);
+
+    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
     return showDialog<String>(
       context: context,
@@ -473,90 +581,94 @@ class _ContactWidgetState extends State<contactWidget> {
         ),
         content: Container(
           width: 400,
-          height: 170,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('nama'),
-              TextFormField(
-                validator: (value) {
-                  final trimmedValue = value!.trim();
-                  final words = trimmedValue.split(' ');
-                  if (words.length < 2) {
-                    return 'Nama harus terdiri dari minimal 2 kata';
-                  }
-                  for (final word in words) {
-                    if (!word.isEmpty &&
-                        !word
-                            .substring(0, 1)
-                            .toUpperCase()
-                            .contains(RegExp(r'[A-Z]'))) {
-                      return 'Setiap kata harus dimulai dengan huruf kapital.';
+          height: 200,
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('nama'),
+                TextFormField(
+                  validator: (value) {
+                    // Validasi Nama
+                    final trimmedValue = value!.trim();
+                    final words = trimmedValue.split(' ');
+                    if (words.length < 2) {
+                      return 'Nama harus terdiri dari minimal 2 kata';
                     }
-                  }
-                  //validasi kosong
-                  if (trimmedValue.isEmpty) {
-                    return 'Nama tidak boleh kosong';
-                  }
-                  if (trimmedValue
-                      .contains(RegExp(r'[0-9!@#%^&*(),.?":{}|<>]'))) {
-                    return 'Nama tidak boleh mengandung angka atau karakter khusus';
-                  }
-                  return null;
-                },
-                controller: nameControllerEdit,
-                // decoration: InputDecoration(
-                //   errorText:
-                //       _nameErrorText,
-                // ),
-              ),
-              SizedBox(height: 20),
-              Text('Nomor'),
-              TextFormField(
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  final nomorTelepon = value!.trim();
-                  if (nomorTelepon.isEmpty) {
-                    return 'Nomor telepon harus diisi oleh user.';
-                  }
-                  if (!nomorTelepon.startsWith('0')) {
-                    return 'Nomor telepon harus dimulai dengan angka 0.';
-                  }
-                  if (!RegExp(r'^0[0-9]{7,14}$').hasMatch(nomorTelepon)) {
-                    return 'Nomor telepon tidak valid. Harus dimulai dengan 0 dan terdiri dari 8 hingga 15 angka.';
-                  }
-                  return null;
-                },
-                controller: nomorControllerEdit,
-              ),
-            ],
+                    for (final word in words) {
+                      if (!word.isEmpty &&
+                          !word
+                              .substring(0, 1)
+                              .toUpperCase()
+                              .contains(RegExp(r'[A-Z]'))) {
+                        return 'Setiap kata harus dimulai dengan huruf kapital.';
+                      }
+                    }
+                    // Validasi kosong
+                    if (trimmedValue.isEmpty) {
+                      return 'Nama tidak boleh kosong';
+                    }
+                    if (trimmedValue
+                        .contains(RegExp(r'[0-9!@#%^&*(),.?":{}|<>]'))) {
+                      return 'Nama tidak boleh mengandung angka atau karakter khusus';
+                    }
+                    return null;
+                  },
+                  controller: nameControllerEdit,
+                ),
+                SizedBox(height: 20),
+                Text('Nomor'),
+                TextFormField(
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    final nomorTelepon = value!.trim();
+                    if (nomorTelepon.isEmpty) {
+                      return 'Nomor telepon harus diisi oleh user.';
+                    }
+                    if (!nomorTelepon.startsWith('0')) {
+                      return 'Nomor telepon harus dimulai dengan angka 0.';
+                    }
+                    if (!RegExp(r'^0[0-9]{7,14}$').hasMatch(nomorTelepon)) {
+                      return 'Nomor telepon tidak valid. Harus dimulai dengan 0 dan terdiri dari 8 hingga 15 angka.';
+                    }
+                    return null;
+                  },
+                  controller: nomorControllerEdit,
+                ),
+              ],
+            ),
           ),
         ),
         actions: [
-          ElevatedButton(
+          TextButton(
             onPressed: () {
-              final enteredName = nameControllerEdit.text;
-              final namePattern = RegExp(
-                r'^[A-Z][a-z]* [A-Z][a-z]*$',
-              );
-
-              if (!namePattern.hasMatch(enteredName)) {
-              } else {
-                setState(() {
-                  contacts[index].name = nameControllerEdit.text;
-                });
-                Navigator.pop(context);
-                print(index);
-                print('submit edit');
+              if (formKey.currentState!.validate()) {
+                final enteredName = nameControllerEdit.text;
+                final enteredPhone = nomorControllerEdit.text;
+                final namePattern = RegExp(
+                  r'^[A-Z][a-z]* [A-Z][a-z]*$',
+                );
+                if (!namePattern.hasMatch(enteredName)) {
+                } else {
+                  setState(() {
+                    contacts[index].name = enteredName;
+                    contacts[index].phone = enteredPhone;
+                  });
+                  Navigator.pop(context);
+                  print(index);
+                  print('Simpan');
+                }
+                // Navigator pop.(context)();
               }
             },
-            child: Text('Submit Edit'),
+            child: const Text('Simpan'),
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context, 'Cancel');
+              Navigator.pop(context, 'Cancle');
             },
-            child: Text('Cancel'),
+            child: const Text('Cancle'),
           ),
         ],
       ),
