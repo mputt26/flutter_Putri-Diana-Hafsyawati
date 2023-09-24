@@ -131,7 +131,7 @@ class _HelloWorldState extends State<HelloWorld> {
             //form
             formInput(namaControllers, nomorControllers, formKey),
 
-            // DatePicker(),
+            DatePicker(),
             // BuildColorPicker(context, _currentColor),
             //button checkbox dan lingkaran
             buttonSubmit(

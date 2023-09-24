@@ -131,7 +131,6 @@ class _HelloWorldState extends State<HelloWorld> {
             //form
             formInput(namaControllers, nomorControllers, formKey),
 
-            // DatePicker(),
             // BuildColorPicker(context, _currentColor),
             //button checkbox dan lingkaran
             buttonSubmit(
@@ -174,37 +173,6 @@ class _HelloWorldState extends State<HelloWorld> {
           ),
         ],
       ),
-    );
-  }
-
-  Column DatePicker() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text('Date'),
-            TextButton(
-              child: const Text('Select'),
-              onPressed: () async {
-                final selectData = await showDatePicker(
-                  context: context,
-                  initialDate: currentDate,
-                  firstDate: DateTime(1990),
-                  lastDate: DateTime(currentDate.year + 5),
-                );
-                setState(() {
-                  if (selectData != null) {
-                    _dueDate = selectData;
-                  }
-                });
-              },
-            )
-          ],
-        ),
-        Text(DateFormat('dd-MM-yyyy').format(_dueDate)),
-      ],
     );
   }
 }
