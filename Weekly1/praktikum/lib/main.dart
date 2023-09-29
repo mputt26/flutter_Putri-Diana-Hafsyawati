@@ -77,16 +77,31 @@ class _HelloWorldState extends State<HelloWorld> {
                       height: 250,
                       width: 500,
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Pesan Telah Terkirim!'),
-                          // Text('Name : ${firstname}  ${lastname}'),
-                          // Text('Email : ${email}'),
-                          // Text('Message : ${message}'),
+                          Text(
+                            'Pesan Telah Terkirim!',
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 20.0),
+                          Text(
+                              'Name : ${firstnameControllers.text}  ${lastnameControllers.text}',
+                              textAlign: TextAlign.left),
+                          Text('Email : ${emailControllers.text}',
+                              textAlign: TextAlign.left),
+                          Text(
+                            'Message : ${messageControllers.text}',
+                            textAlign: TextAlign.left,
+                          ),
                           const Spacer(),
                           Align(
                             alignment: Alignment.bottomRight,
                             child: TextButton(
                               onPressed: () {
+                                firstnameControllers.text = '';
+                                lastnameControllers.text = '';
+                                emailControllers.text = '';
+                                messageControllers.text = '';
                                 Navigator.pop(context);
                               },
                               child: Text('Oke'),
