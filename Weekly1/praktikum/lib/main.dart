@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const HelloWorld();
+    return HelloWorld();
   }
 }
 
@@ -63,11 +63,50 @@ class _HelloWorldState extends State<HelloWorld> {
           ),
           SizedBox(height: 15.0),
           Welcoming(),
-          SizedBox(height: 15.0),
-          FormInput(firstnameControllers, lastnameControllers, emailControllers,
-              messageControllers)
+          SizedBox(height: 25.0),
+          Form(
+            key: formKey,
+            child: FormInput(firstnameControllers, lastnameControllers,
+                emailControllers, messageControllers, () {
+              if (formKey.currentState!.validate()) {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    content: Container(
+                      height: 100,
+                      child: Column(
+                        children: [
+                          Text('Pesan Telah Terkirim!'),
+                          const Spacer(),
+                          Align(
+                            alignment: Alignment.bottomRight,
+                            child: TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text('Oke'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }
+            }),
+          )
         ]),
       ),
+      bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Colors.black,
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.white,
+          items: [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+            BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.settings), label: 'Setting'),
+          ]),
     );
   }
 }
@@ -96,22 +135,162 @@ Welcoming() {
   );
 }
 
+// typedef SubmitCallback = void Function(
+//     BuildContext context, TextEditingController firstnameControllers);
 Widget FormInput(
   TextEditingController firstnameControllers,
   TextEditingController lastnameControllers,
   TextEditingController emailControllers,
   TextEditingController messageControllers,
+  VoidCallback onSubmitCallback,
+  // SubmitCallback onSubmitCallback
 ) {
   return Column(
+    mainAxisAlignment: MainAxisAlignment.start,
     children: [
       Row(
         children: [
-          TextFormField(
-            controller: firstnameControllers,
-            decoration: InputDecoration(labelText: 'First Name'),
+          Padding(
+            padding: const EdgeInsets.only(left: 11),
+            child: SizedBox(
+              width: 180,
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('First Name*', textAlign: TextAlign.left),
+                    TextFormField(
+                        controller: firstnameControllers,
+                        validator: (value) {
+                          final trimmedValue = value!.trim();
+                          if (trimmedValue.isEmpty) {
+                            return 'Wajib diisi';
+                          }
+                        },
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(gapPadding: 10),
+                            hintText: 'insert your name'),
+                        onChanged: (firstname) {
+                          print('$firstname');
+                        }),
+                  ]),
+            ),
+          ),
+          SizedBox(width: 10),
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: SizedBox(
+                width: 180,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Last Name*',
+                      textAlign: TextAlign.left,
+                    ),
+                    TextFormField(
+                        controller: lastnameControllers,
+                        validator: (value) {
+                          final trimmedValue = value!.trim();
+                          if (trimmedValue.isEmpty) {
+                            return 'Wajib diisi';
+                          }
+                        },
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(gapPadding: 10),
+                            hintText: 'insert your name'),
+                        onChanged: (lastname) {
+                          print('$lastname');
+                        }),
+                  ],
+                )),
           )
         ],
       ),
+      SizedBox(height: 10),
+      Padding(
+        padding: const EdgeInsets.only(left: 11, right: 10),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text('Email*'),
+          TextFormField(
+              controller: emailControllers,
+              validator: (value) {
+                final trimmedValue = value!.trim();
+                if (trimmedValue.isEmpty) {
+                  return 'Wajib diisi';
+                }
+              },
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(gapPadding: 10),
+                  hintText: 'youremail@email.com'),
+              onChanged: (email) {
+                print('$email');
+              })
+        ]),
+      ),
+      SizedBox(height: 10),
+      Padding(
+        padding: const EdgeInsets.only(left: 11, right: 10),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text('What can we help you With?'),
+          TextFormField(
+            controller: messageControllers,
+            validator: (value) {
+              final trimmedValue = value!.trim();
+              if (trimmedValue.isEmpty) {
+                return 'Wajib diisi';
+              }
+            },
+            keyboardType: TextInputType.multiline,
+            maxLines: 3,
+            decoration: InputDecoration(border: OutlineInputBorder()),
+          )
+        ]),
+      ),
+      SizedBox(height: 10),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ElevatedButton(
+            child: Text('Submit'),
+            onPressed: onSubmitCallback,
+          )
+        ],
+      )
     ],
+  );
+}
+
+void onSubmitCallback(
+    BuildContext context, TextEditingController firstnameControllers) {
+  firstnameControllers.clear();
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Container(
+          constraints: BoxConstraints(minWidth: 10.0, maxHeight: 20.0),
+          padding: EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Information!',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+              SizedBox(height: 10),
+              Text('Pesan Telah Terkirim!'),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('Oke'),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
   );
 }
