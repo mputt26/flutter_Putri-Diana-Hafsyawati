@@ -16,3 +16,7 @@
  6. Flutter Channel
  7. Flutter Pub
  8. Flutter Emulator
+
+###  Packages Management
+
+Flutter mendukung sharing penggunaan packages yang dikembangkan oleh developer lain, yang dapat di cari pada website pub.dev
