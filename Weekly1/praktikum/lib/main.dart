@@ -30,6 +30,7 @@ class _HelloWorldState extends State<HelloWorld> {
   var emailControllers = TextEditingController();
   var messageControllers = TextEditingController();
   var formKey = GlobalKey<FormState>();
+
   @override
   void dispose() {
     firstnameControllers.dispose();
@@ -73,10 +74,14 @@ class _HelloWorldState extends State<HelloWorld> {
                   context: context,
                   builder: (BuildContext context) => AlertDialog(
                     content: Container(
-                      height: 100,
+                      height: 250,
+                      width: 500,
                       child: Column(
                         children: [
                           Text('Pesan Telah Terkirim!'),
+                          // Text('Name : ${firstname}  ${lastname}'),
+                          // Text('Email : ${email}'),
+                          // Text('Message : ${message}'),
                           const Spacer(),
                           Align(
                             alignment: Alignment.bottomRight,
@@ -251,46 +256,15 @@ Widget FormInput(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ElevatedButton(
-            child: Text('Submit'),
-            onPressed: onSubmitCallback,
+          Padding(
+            padding: const EdgeInsets.only(left: 11.0),
+            child: ElevatedButton(
+              child: Text('Submit'),
+              onPressed: onSubmitCallback,
+            ),
           )
         ],
       )
     ],
-  );
-}
-
-void onSubmitCallback(
-    BuildContext context, TextEditingController firstnameControllers) {
-  firstnameControllers.clear();
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Container(
-          constraints: BoxConstraints(minWidth: 10.0, maxHeight: 20.0),
-          padding: EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('Information!',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-              SizedBox(height: 10),
-              Text('Pesan Telah Terkirim!'),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text('Oke'),
-              ),
-            ],
-          ),
-        ),
-      );
-    },
   );
 }
